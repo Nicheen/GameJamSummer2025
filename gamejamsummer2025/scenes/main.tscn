@@ -1,6 +1,38 @@
-[gd_scene load_steps=2 format=3 uid="uid://8ciqjf3iwtvf"]
+[gd_scene load_steps=4 format=3 uid="uid://dbwhub52hewqs"]
 
 [ext_resource type="Script" uid="uid://c2dkvm0rwmi1d" path="res://scripts/main.gd" id="1_o5qli"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o5qli"]
+size = Vector2(200, 648)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0wfyh"]
+size = Vector2(200, 648)
+
 [node name="Main" type="Node2D"]
 script = ExtResource("1_o5qli")
+
+[node name="Borders" type="Node2D" parent="."]
+
+[node name="Line2DLeft" type="Line2D" parent="Borders"]
+points = PackedVector2Array(190, 0, 190, 648)
+width = 20.0
+
+[node name="Line2DRight" type="Line2D" parent="Borders/Line2DLeft"]
+points = PackedVector2Array(962, 0, 962, 648)
+width = 20.0
+
+[node name="StaticBody2DLeft" type="StaticBody2D" parent="Borders"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/StaticBody2DLeft"]
+position = Vector2(100, 324)
+shape = SubResource("RectangleShape2D_o5qli")
+
+[node name="StaticBody2DRight" type="StaticBody2D" parent="Borders"]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/StaticBody2DRight"]
+position = Vector2(1052, 324)
+shape = SubResource("RectangleShape2D_0wfyh")
