@@ -23,6 +23,9 @@ extends CharacterBody2D
 enum WallSide { BOTTOM, TOP }
 var current_wall: WallSide = WallSide.BOTTOM
 
+# Wall positioning settings
+var wall_offset: float = 65.0  # Distance from wall edge to player center
+
 # Internal variables
 var teleport_timer: float = 0.0
 var can_teleport: bool = true
@@ -40,12 +43,16 @@ signal health_changed(new_health: int)
 signal player_died
 
 func _ready():
-	# Set initial position and health
-	global_position = Vector2(500, 200)
+	# Set initial health
 	current_health = max_health
+	
+	# Set initial position at bottom wall
+	position_at_current_wall()
 	
 	# Connect to projectile hits
 	connect_to_projectiles()
+	
+	print("Player initialized at: ", global_position, " on wall: ", current_wall)
 
 func _physics_process(delta):
 	handle_teleport_cooldown(delta)
@@ -55,28 +62,58 @@ func _physics_process(delta):
 	handle_shoot_input()
 	handle_teleport_effect(delta)
 	
+	# Keep player glued to current wall
+	maintain_wall_position()
+	
 	# Apply movement
 	move_and_slide()
+
+func maintain_wall_position():
+	# Ensure player stays glued to the current wall
+	var half_size = play_area_size * 0.5
+	var bounds = {
+		"top": play_area_center.y - half_size.y,
+		"bottom": play_area_center.y + half_size.y
+	}
+	
+	match current_wall:
+		WallSide.BOTTOM:
+			global_position.y = bounds.bottom - wall_offset
+		WallSide.TOP:
+			global_position.y = bounds.top + wall_offset
+
+func position_at_current_wall():
+	# Position player at the current wall
+	var half_size = play_area_size * 0.5
+	var bounds = {
+		"top": play_area_center.y - half_size.y,
+		"bottom": play_area_center.y + half_size.y
+	}
+	
+	# Start at center horizontally
+	var new_position = Vector2(play_area_center.x, global_position.y)
+	
+	# Position at correct wall
+	match current_wall:
+		WallSide.BOTTOM:
+			new_position.y = bounds.bottom - wall_offset
+		WallSide.TOP:
+			new_position.y = bounds.top + wall_offset
+	
+	global_position = new_position
 
 func handle_movement(delta):
 	# Get input direction using the Input Map actions
 	var input_dir = Input.get_axis("move_left", "move_right")
 	
-	# Apply movement based on current wall (only top and bottom)
-	match current_wall:
-		WallSide.BOTTOM:
-			# Normal horizontal movement on bottom
-			if input_dir != 0:
-				velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
-			else:
-				velocity.x = move_toward(velocity.x, 0, friction * delta)
-				
-		WallSide.TOP:
-			# Horizontal movement on top (inverted gravity)
-			if input_dir != 0:
-				velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
-			else:
-				velocity.x = move_toward(velocity.x, 0, friction * delta)
+	# Apply horizontal movement only (Y is controlled by wall position)
+	if input_dir != 0:
+		velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
+	else:
+		velocity.x = move_toward(velocity.x, 0, friction * delta)
+	
+	# No vertical movement - player is glued to walls
+	velocity.y = 0
 
 func handle_teleport_input():
 	if not can_teleport:
@@ -127,16 +164,24 @@ func shoot_projectile():
 	# Wait one frame then initialize
 	await get_tree().process_frame
 	
-	# Initialize the projectile
-	projectile.initialize(shoot_direction, projectile_speed)
+	# Initialize the projectile with play area bounds
+	projectile.initialize(shoot_direction, projectile_speed, play_area_center, play_area_size)
 	
 	# Connect the hit signal
-	projectile.hit_player.connect(_on_projectile_hit)
+	if projectile.has_signal("hit_player"):
+		var connection_result = projectile.hit_player.connect(_on_projectile_hit)
+		if connection_result == OK:
+			print("Successfully connected projectile hit signal")
+		else:
+			print("Failed to connect projectile hit signal: ", connection_result)
+	else:
+		print("ERROR: Projectile doesn't have hit_player signal!")
 	
 	print("Projectile setup complete")
 	
 	# Start cooldown
 	start_shoot_cooldown()
+
 func teleport_to_edge(direction: Vector2):
 	var new_position = global_position
 	var half_size = play_area_size * 0.5
@@ -148,21 +193,38 @@ func teleport_to_edge(direction: Vector2):
 	# Reset velocity when teleporting
 	velocity = Vector2.ZERO
 	
-	# Teleport to edge and update current wall (only up/down)
-	if direction.y > 0:  # Teleport down
-		new_position.y = bounds.bottom - 50
+	# Store previous wall for comparison
+	var previous_wall = current_wall
+	
+	# Teleport based on direction, not current wall state
+	if direction.y > 0:  # Teleport down (to bottom wall)
+		new_position.y = bounds.bottom - wall_offset
 		current_wall = WallSide.BOTTOM
-	elif direction.y < 0:  # Teleport up
-		new_position.y = bounds.top + 50
+		
+		# If already at bottom, teleport to center horizontally for repositioning
+		if previous_wall == WallSide.BOTTOM:
+			new_position.x = play_area_center.x
+			print("Repositioned on BOTTOM wall")
+		else:
+			print("Teleported to BOTTOM wall")
+			
+	elif direction.y < 0:  # Teleport up (to top wall)
+		new_position.y = bounds.top + wall_offset
 		current_wall = WallSide.TOP
+		
+		# If already at top, teleport to center horizontally for repositioning
+		if previous_wall == WallSide.TOP:
+			new_position.x = play_area_center.x
+			print("Repositioned on TOP wall")
+		else:
+			print("Teleported to TOP wall")
 	
 	# Apply teleportation
 	global_position = new_position
 	start_teleport_cooldown()
 	start_teleport_effect()
 	
-	# Update sprite rotation based on wall
-	update_sprite_rotation()
+	# NO MORE SPRITE ROTATION - removed the call to update_sprite_rotation()
 
 func start_teleport_cooldown():
 	can_teleport = false
@@ -205,27 +267,21 @@ func set_sprite_modulate(color: Color):
 func set_play_area(center: Vector2, size: Vector2):
 	play_area_center = center
 	play_area_size = size
+	
+	# Reposition player at current wall with new bounds
+	position_at_current_wall()
+	
+	print("Play area updated - player repositioned at: ", global_position)
 
-func update_sprite_rotation():
-	if not sprite:
-		return
-	
-	var tween = create_tween()
-	var target_rotation = 0.0
-	
-	match current_wall:
-		WallSide.BOTTOM:
-			target_rotation = 0.0  # Normal orientation
-		WallSide.TOP:
-			target_rotation = PI  # Upside down
-	
-	tween.tween_property(sprite, "rotation", target_rotation, 0.2)
+# REMOVED: update_sprite_rotation() function completely
+# The player sprite will no longer rotate when teleporting
 
 func connect_to_projectiles():
 	# This function can be used to connect to existing projectiles if needed
 	pass
 
 func _on_projectile_hit():
+	print("PLAYER HIT BY PROJECTILE!")
 	take_damage(damage_per_hit)
 
 func take_damage(amount: int):
@@ -244,7 +300,6 @@ func take_damage(amount: int):
 	# Check if player died
 	if current_health <= 0:
 		player_died.emit()
-		# Optional: disable movement or restart game
 		print("Player died!")
 
 func heal(amount: int):
