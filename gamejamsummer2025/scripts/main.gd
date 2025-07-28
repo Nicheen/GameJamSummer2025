@@ -6,17 +6,20 @@ extends Node2D
 
 # Hardcoded scene paths
 const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
-const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn"
+const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
+const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
 
 # Game objects
 var player: CharacterBody2D
 var pause_menu: Control
+var death_menu: Control
 
 func _ready():
 	# Set up the game
 	setup_play_area()
 	spawn_player()
 	setup_pause_menu()
+	setup_death_menu()
 	
 	print("Game scene ready!")
 	print("Play area center: ", play_area_center)
@@ -51,10 +54,22 @@ func setup_pause_menu():
 	
 	print("Pause menu setup complete")
 
+func setup_death_menu():
+	# Load and instantiate the death menu
+	var death_menu_scene = load(DEATH_MENU_SCENE)
+	death_menu = death_menu_scene.instantiate()
+	add_child(death_menu)
+	
+	print("Death menu setup complete")
+
 func _on_player_died():
-	print("Player died! Game over!")
-	# Handle game over logic here
-	# You could restart the level, show game over screen, etc.
+	print("Player died! Showing death screen...")
+	
+	# Show death menu instead of just printing
+	if death_menu and death_menu.has_method("show_death_menu"):
+		death_menu.show_death_menu()
+	else:
+		print("ERROR: Death menu not found or doesn't have show_death_menu method!")
 
 func _on_player_health_changed(new_health: int):
 	print("Player health: ", new_health)
