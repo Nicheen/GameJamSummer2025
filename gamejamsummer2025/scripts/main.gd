@@ -79,6 +79,10 @@ func spawn_player():
 	player = player_scene.instantiate()
 	add_child(player)
 	
+	# Set player position to center bottom
+	var bottom_y = play_area_center.y + (play_area_size.y * 0.5) - 50  # 50px från botten
+	player.global_position = Vector2(play_area_center.x, bottom_y)
+	
 	# Set up the player
 	if player.has_method("set_play_area"):
 		player.set_play_area(play_area_center, play_area_size)
