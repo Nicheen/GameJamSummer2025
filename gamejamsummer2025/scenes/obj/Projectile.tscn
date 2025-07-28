@@ -4,14 +4,18 @@
 [ext_resource type="Texture2D" uid="uid://cld2l1b5hqkts" path="res://images/projectile.png" id="2_vihyi"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_vihyi"]
+friction = 0.1
+bounce = 0.8
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_kdm4f"]
 radius = 13.0
 
 [node name="Projectile" type="RigidBody2D"]
 collision_layer = 2
-collision_mask = 5
+collision_mask = 31
 physics_material_override = SubResource("PhysicsMaterial_vihyi")
+contact_monitor = true
+max_contacts_reported = 10
 script = ExtResource("1_t7eop")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

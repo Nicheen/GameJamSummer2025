@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bvi1iajwn8esu" path="res://images/square_player_svg.svg" id="2_mb3g1"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_j31ew"]
-size = Vector2(130, 129)
+size = Vector2(117, 57)
 
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 4
@@ -15,4 +15,5 @@ texture = ExtResource("2_mb3g1")
 flip_v = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 0.5)
 shape = SubResource("RectangleShape2D_j31ew")
