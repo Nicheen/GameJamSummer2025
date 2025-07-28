@@ -102,47 +102,41 @@ func handle_shoot_input():
 		shoot_projectile()
 
 func shoot_projectile():
-	if not projectile_scene:
-		print("Warning: No projectile scene assigned!")
+	if not projectile_scene or not can_shoot:
 		return
+		
+	print("=== SHOOTING PROJECTILE ===")
 	
-	# Create projectile instance
-	var projectile = projectile_scene.instantiate()
-	
-	# Add to scene tree (parent's parent to avoid moving with player)
-	get_tree().current_scene.add_child(projectile)
-	
-	# Calculate shoot direction based on mouse position
+	# Get shoot direction toward mouse
 	var mouse_pos = get_global_mouse_position()
 	var shoot_direction = (mouse_pos - global_position).normalized()
 	
-	# Determine spawn offset based on current wall position
-	var spawn_offset: Vector2
-	match current_wall:
-		WallSide.BOTTOM:
-			# Player is on bottom wall, spawn above the player
-			spawn_offset = Vector2(0, -80)  # Spawn 40 pixels above
-		WallSide.TOP:
-			# Player is on top wall (upside down), spawn below the player
-			spawn_offset = Vector2(0, 80)   # Spawn 40 pixels below
+	# Create projectile
+	var projectile = projectile_scene.instantiate()
 	
-	# Add a small horizontal offset in the shooting direction for better visual
-	spawn_offset.x += shoot_direction.x * 20
+	# Position it in front of player
+	var spawn_position = global_position + (shoot_direction * 80)
+	projectile.global_position = spawn_position
 	
-	# Set projectile position with proper offset
-	projectile.global_position = global_position + spawn_offset
+	print("Spawning projectile at: ", spawn_position)
+	print("Shoot direction: ", shoot_direction)
 	
-	# Initialize projectile
-	if projectile.has_method("initialize"):
-		projectile.initialize(shoot_direction, projectile_speed, play_area_center, play_area_size)
+	# Add to scene first
+	get_tree().current_scene.add_child(projectile)
 	
-	# Connect projectile hit signal
-	if projectile.has_signal("hit_player"):
-		projectile.hit_player.connect(_on_projectile_hit)
+	# Wait one frame then initialize
+	await get_tree().process_frame
+	
+	# Initialize the projectile
+	projectile.initialize(shoot_direction, projectile_speed)
+	
+	# Connect the hit signal
+	projectile.hit_player.connect(_on_projectile_hit)
+	
+	print("Projectile setup complete")
 	
 	# Start cooldown
 	start_shoot_cooldown()
-
 func teleport_to_edge(direction: Vector2):
 	var new_position = global_position
 	var half_size = play_area_size * 0.5

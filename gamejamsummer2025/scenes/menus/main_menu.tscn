@@ -1,20 +1,20 @@
 [gd_scene load_steps=3 format=3 uid="uid://bxsxsg8svbiye"]
 
-[ext_resource type="Script" uid="uid://hxs1sdtlbjeo" path="res://main_menu.gd" id="1_06t4h"]
-[ext_resource type="Texture2D" uid="uid://cc4t6edh6d5p4" path="res://images/not_pong_main_menu_background.png" id="3_bqqt6"]
+[ext_resource type="Script" uid="uid://hxs1sdtlbjeo" path="res://scripts/main_menu.gd" id="1_ovrgc"]
+[ext_resource type="Texture2D" uid="uid://cc4t6edh6d5p4" path="res://images/not_pong_main_menu_background.png" id="2_2o76q"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1151.0
 offset_bottom = 648.0
-script = ExtResource("1_06t4h")
+script = ExtResource("1_ovrgc")
 
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 0
 offset_right = 2185.0
 offset_bottom = 1138.0
-texture = ExtResource("3_bqqt6")
+texture = ExtResource("2_2o76q")
 expand_mode = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]

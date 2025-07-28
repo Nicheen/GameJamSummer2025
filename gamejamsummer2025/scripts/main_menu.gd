@@ -13,7 +13,7 @@ func _ready():
 
 func _on_start_pressed():
 	# Load your game scene - replace with your actual game scene path
-	get_tree().change_scene_to_file("res://scenes/Player.tscn")  # Inte bara "res://Game.tscn"ned!")
+	get_tree().change_scene_to_file("res://scenes/main.tscn")  # Inte bara "res://Game.tscn"ned!")
 
 func _on_fullscreen_pressed():
 	# Toggle between fullscreen and windowed mode
