@@ -112,12 +112,25 @@ func shoot_projectile():
 	# Add to scene tree (parent's parent to avoid moving with player)
 	get_tree().current_scene.add_child(projectile)
 	
-	# Set projectile position
-	projectile.global_position = global_position
-	
 	# Calculate shoot direction based on mouse position
 	var mouse_pos = get_global_mouse_position()
 	var shoot_direction = (mouse_pos - global_position).normalized()
+	
+	# Determine spawn offset based on current wall position
+	var spawn_offset: Vector2
+	match current_wall:
+		WallSide.BOTTOM:
+			# Player is on bottom wall, spawn above the player
+			spawn_offset = Vector2(0, -80)  # Spawn 40 pixels above
+		WallSide.TOP:
+			# Player is on top wall (upside down), spawn below the player
+			spawn_offset = Vector2(0, 80)   # Spawn 40 pixels below
+	
+	# Add a small horizontal offset in the shooting direction for better visual
+	spawn_offset.x += shoot_direction.x * 20
+	
+	# Set projectile position with proper offset
+	projectile.global_position = global_position + spawn_offset
 	
 	# Initialize projectile
 	if projectile.has_method("initialize"):

@@ -8,6 +8,7 @@ var play_area_size: Vector2
 var bounce_count: int = 0
 var max_bounces: int = 5
 var lifetime: float = 10.0
+var initialized: bool = false
 
 # Signals
 signal hit_player
@@ -20,6 +21,8 @@ func _ready():
 	# Set up physics
 	gravity_scale = 0  # No gravity for projectiles
 	linear_damp = 0    # No air resistance
+	contact_monitor = true
+	max_contacts_reported = 10
 	
 	# Set up collision detection
 	body_entered.connect(_on_body_entered)
@@ -31,17 +34,23 @@ func _ready():
 	timer.timeout.connect(_on_lifetime_expired)
 	add_child(timer)
 	timer.start()
+	
+	await get_tree().process_frame
 
 func initialize(shoot_direction: Vector2, projectile_speed: float, area_center: Vector2, area_size: Vector2):
 	direction = shoot_direction.normalized()
 	speed = projectile_speed
 	play_area_center = area_center
 	play_area_size = area_size
+	initialized = true
 	
 	# Set initial velocity
+	await get_tree().process_frame
 	linear_velocity = direction * speed
 
 func _physics_process(delta):
+	if not initialized:
+		return
 	check_bounds_collision()
 
 func check_bounds_collision():
@@ -102,8 +111,11 @@ func create_bounce_effect():
 func _on_body_entered(body):
 	# Check if it hit the player
 	if body.has_method("take_damage"):
-		hit_player.emit()
-		queue_free()
+		# Only damage if projectile has moved away from spawn point
+		var spawn_distance = global_position.distance_to(body.global_position)
+		if spawn_distance > 50:  # Minimum distance before it can hit player
+			hit_player.emit()
+			queue_free()
 	else:
 		# Hit something else, bounce off it
 		var collision_normal = (global_position - body.global_position).normalized()
