@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://tis5fb25keco"]
+[gd_scene load_steps=3 format=3 uid="uid://eppnqq6ap33r"]
 
-[ext_resource type="Script" uid="uid://57mwgwgrtt80" path="res://projectile.gd" id="1_t7eop"]
+[ext_resource type="Script" path="res://projectile.gd" id="1_t7eop"]
 [ext_resource type="Texture2D" uid="uid://cwnerh202ej8e" path="res://icon.svg" id="2_e7peq"]
 
 [node name="Node2D" type="Node2D"]

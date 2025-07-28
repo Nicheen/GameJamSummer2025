@@ -9,7 +9,7 @@ func _ready():
 
 func _on_start_pressed():
 	# Load your game scene - replace with your actual game scene path
-	get_tree().change_scene_to_file("res://Game.tscn")
+	get_tree().change_scene_to_file("res://Player.tscn")
 
 func _on_quit_pressed():
 	get_tree().quit()
