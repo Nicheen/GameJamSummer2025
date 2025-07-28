@@ -1,7 +1,5 @@
 extends Control
 
-@export var scene_to_start: PackedScene
-
 func _ready():
 	# Connect buttons using Godot 4.x syntax
 	$VBoxContainer/btn_start.pressed.connect(_on_start_pressed)
@@ -15,10 +13,7 @@ func _ready():
 
 func _on_start_pressed():
 	# Load your game scene - replace with your actual game scene path
-	if scene_to_start:
-		get_tree().change_scene_to_packed(scene_to_start)
-	else:
-		print("Error: No start scene assigned!")
+	get_tree().change_scene_to_file("res://scenes/Player.tscn")  # Inte bara "res://Game.tscn"ned!")
 
 func _on_fullscreen_pressed():
 	# Toggle between fullscreen and windowed mode
