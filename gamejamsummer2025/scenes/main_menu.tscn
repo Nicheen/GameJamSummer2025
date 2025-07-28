@@ -1,7 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://h242fj75igdb"]
+[gd_scene load_steps=3 format=3 uid="uid://bxsxsg8svbiye"]
 
 [ext_resource type="Script" uid="uid://hxs1sdtlbjeo" path="res://main_menu.gd" id="1_06t4h"]
-[ext_resource type="PackedScene" uid="uid://b4g35yo4tk2kb" path="res://scenes/Player.tscn" id="2_ekxnf"]
+[ext_resource type="Texture2D" uid="uid://cc4t6edh6d5p4" path="res://not_pong_main_menu_background.png" id="2_7vrkn"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -9,7 +9,13 @@ anchors_preset = 0
 offset_right = 1151.0
 offset_bottom = 648.0
 script = ExtResource("1_06t4h")
-scene_to_start = ExtResource("2_ekxnf")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 2185.0
+offset_bottom = 1138.0
+texture = ExtResource("2_7vrkn")
+expand_mode = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
@@ -25,6 +31,10 @@ text = "START GAME"
 [node name="btn_options" type="Button" parent="VBoxContainer"]
 layout_mode = 2
 text = "OPTIONS"
+
+[node name="btn_fullscreen" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "FULLSCREEN"
 
 [node name="btn_quit" type="Button" parent="VBoxContainer"]
 layout_mode = 2
