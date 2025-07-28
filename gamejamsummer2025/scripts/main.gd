@@ -23,9 +23,8 @@ func _ready():
 	print("Play area size: ", play_area_size)
 
 func setup_play_area():
-	# You can draw bounds or set up background here
-	# For now, we'll just use the values
-	pass
+	# Create grid background
+	create_grid_background()
 
 func spawn_player():
 	# Load and instantiate the player scene
@@ -60,3 +59,39 @@ func _on_player_died():
 func _on_player_health_changed(new_health: int):
 	print("Player health: ", new_health)
 	# Update UI health display here
+
+func create_grid_background():
+	# Create a ColorRect that covers the entire screen
+	var background = ColorRect.new()
+	background.name = "GridBackground"
+	background.anchors_preset = Control.PRESET_FULL_RECT
+	background.size = play_area_size
+	background.position = Vector2.ZERO
+	
+	# Create shader material
+	var shader_material = ShaderMaterial.new()
+	
+	# Try to load the shader file
+	var grid_shader = load("res://shaders/grid_shader.gdshader")
+	if grid_shader == null:
+		print("ERROR: Could not load grid shader at res://shaders/grid_shader.gdshader")
+		print("Make sure the shader file exists in the shaders folder")
+		return
+	
+	shader_material.shader = grid_shader
+	
+	# Set shader parameters
+	shader_material.set_shader_parameter("grid_size", 50.0)
+	shader_material.set_shader_parameter("line_width", 2.0)
+	shader_material.set_shader_parameter("line_color", Color.WHITE)
+	shader_material.set_shader_parameter("background_color", Color.BLACK)
+	shader_material.set_shader_parameter("line_alpha", 0.3)
+	
+	# Apply material to background
+	background.material = shader_material
+	
+	# Add as first child so it renders behind everything
+	add_child(background)
+	move_child(background, 0)
+	
+	print("Grid background created successfully")

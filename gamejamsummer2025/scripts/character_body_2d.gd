@@ -11,7 +11,7 @@ extends CharacterBody2D
 @export var play_area_center: Vector2 = Vector2(500, 300)
 
 # Shooting settings
-@export var projectile_scene: PackedScene
+@export var projectile_scene: PackedScene = load("res://scenes/obj/Projectile.tscn")
 @export var projectile_speed: float = 500.0
 @export var shoot_cooldown: float = 0.3
 
