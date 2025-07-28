@@ -1,9 +1,9 @@
 extends CharacterBody2D
 
 # Movement settings
-@export var speed: float = 300.0
-@export var acceleration: float = 1500.0
-@export var friction: float = 1200.0
+@export var speed: float = 600.0
+@export var acceleration: float = 2000.0
+@export var friction: float = 4000.0
 
 # Teleport settings
 @export var teleport_cooldown: float = 0.2
@@ -67,14 +67,30 @@ func handle_movement(delta):
 		WallSide.BOTTOM:
 			# Normal horizontal movement on bottom
 			if input_dir != 0:
-				velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
+				# Kolla om vi byter riktning
+				var changing_direction = (velocity.x > 0 and input_dir < 0) or (velocity.x < 0 and input_dir > 0)
+				
+				if changing_direction:
+					# Mycket högre acceleration när vi byter riktning
+					velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * 3 * delta)
+				else:
+					# Normal acceleration
+					velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
 			else:
 				velocity.x = move_toward(velocity.x, 0, friction * delta)
 				
 		WallSide.TOP:
-			# Horizontal movement on top (inverted gravity)
+			# Horizontal movement on top (samma logik)
 			if input_dir != 0:
-				velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
+				# Kolla om vi byter riktning
+				var changing_direction = (velocity.x > 0 and input_dir < 0) or (velocity.x < 0 and input_dir > 0)
+				
+				if changing_direction:
+					# Mycket högre acceleration när vi byter riktning
+					velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * 3 * delta)
+				else:
+					# Normal acceleration
+					velocity.x = move_toward(velocity.x, input_dir * speed, acceleration * delta)
 			else:
 				velocity.x = move_toward(velocity.x, 0, friction * delta)
 
@@ -145,8 +161,8 @@ func teleport_to_edge(direction: Vector2):
 		"bottom": play_area_center.y + half_size.y
 	}
 	
-	# Reset velocity when teleporting
-	velocity = Vector2.ZERO
+	# Spara nuvarande x-hastighet innan teleportering
+	var current_x_velocity = velocity.x
 	
 	# Teleport to edge and update current wall (only up/down)
 	if direction.y > 0:  # Teleport down
@@ -158,6 +174,10 @@ func teleport_to_edge(direction: Vector2):
 	
 	# Apply teleportation
 	global_position = new_position
+	
+	# Behåll x-hastigheten, nollställ bara y-hastigheten
+	velocity = Vector2(current_x_velocity, 0)
+	
 	start_teleport_cooldown()
 	start_teleport_effect()
 	
@@ -209,6 +229,12 @@ func set_play_area(center: Vector2, size: Vector2):
 func update_sprite_rotation():
 	if not sprite:
 		return
+	
+	match current_wall:
+		WallSide.BOTTOM:
+			sprite.rotation = 0.0  # Normal orientation
+		WallSide.TOP:
+			sprite.rotation = PI  # Upside down
 	
 	var tween = create_tween()
 	var target_rotation = 0.0
