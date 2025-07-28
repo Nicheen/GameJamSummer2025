@@ -10,6 +10,15 @@ extends CharacterBody2D
 @export var play_area_size: Vector2 = Vector2(1000, 600)
 @export var play_area_center: Vector2 = Vector2(500, 300)
 
+# Shooting settings
+@export var projectile_scene: PackedScene
+@export var projectile_speed: float = 500.0
+@export var shoot_cooldown: float = 0.3
+
+# Health settings
+@export var max_health: int = 100
+@export var damage_per_hit: int = 10
+
 # Wall state tracking
 enum WallSide { BOTTOM, TOP }
 var current_wall: WallSide = WallSide.BOTTOM
@@ -17,20 +26,33 @@ var current_wall: WallSide = WallSide.BOTTOM
 # Internal variables
 var teleport_timer: float = 0.0
 var can_teleport: bool = true
+var shoot_timer: float = 0.0
+var can_shoot: bool = true
+var current_health: int
 
 # Optional: Visual feedback
 @onready var sprite: Sprite2D = $Sprite2D
 var teleport_effect_duration: float = 0.1
 var is_teleporting: bool = false
 
+# Signals
+signal health_changed(new_health: int)
+signal player_died
+
 func _ready():
-	# Set initial position
+	# Set initial position and health
 	global_position = Vector2(500, 200)
+	current_health = max_health
+	
+	# Connect to projectile hits
+	connect_to_projectiles()
 
 func _physics_process(delta):
 	handle_teleport_cooldown(delta)
+	handle_shoot_cooldown(delta)
 	handle_movement(delta)
 	handle_teleport_input()
+	handle_shoot_input()
 	handle_teleport_effect(delta)
 	
 	# Apply movement
@@ -71,6 +93,43 @@ func handle_teleport_input():
 	if teleport_direction != Vector2.ZERO:
 		teleport_to_edge(teleport_direction)
 
+func handle_shoot_input():
+	if not can_shoot:
+		return
+	
+	# Check for mouse click or shoot action
+	if Input.is_action_just_pressed("shoot") or Input.is_action_just_pressed("ui_accept"):
+		shoot_projectile()
+
+func shoot_projectile():
+	if not projectile_scene:
+		print("Warning: No projectile scene assigned!")
+		return
+	
+	# Create projectile instance
+	var projectile = projectile_scene.instantiate()
+	
+	# Add to scene tree (parent's parent to avoid moving with player)
+	get_tree().current_scene.add_child(projectile)
+	
+	# Set projectile position
+	projectile.global_position = global_position
+	
+	# Calculate shoot direction based on mouse position
+	var mouse_pos = get_global_mouse_position()
+	var shoot_direction = (mouse_pos - global_position).normalized()
+	
+	# Initialize projectile
+	if projectile.has_method("initialize"):
+		projectile.initialize(shoot_direction, projectile_speed, play_area_center, play_area_size)
+	
+	# Connect projectile hit signal
+	if projectile.has_signal("hit_player"):
+		projectile.hit_player.connect(_on_projectile_hit)
+	
+	# Start cooldown
+	start_shoot_cooldown()
+
 func teleport_to_edge(direction: Vector2):
 	var new_position = global_position
 	var half_size = play_area_size * 0.5
@@ -108,6 +167,16 @@ func handle_teleport_cooldown(delta):
 		if teleport_timer <= 0:
 			can_teleport = true
 
+func start_shoot_cooldown():
+	can_shoot = false
+	shoot_timer = shoot_cooldown
+
+func handle_shoot_cooldown(delta):
+	if not can_shoot:
+		shoot_timer -= delta
+		if shoot_timer <= 0:
+			can_shoot = true
+
 func start_teleport_effect():
 	is_teleporting = true
 	if sprite:
@@ -144,3 +213,40 @@ func update_sprite_rotation():
 			target_rotation = PI  # Upside down
 	
 	tween.tween_property(sprite, "rotation", target_rotation, 0.2)
+
+func connect_to_projectiles():
+	# This function can be used to connect to existing projectiles if needed
+	pass
+
+func _on_projectile_hit():
+	take_damage(damage_per_hit)
+
+func take_damage(amount: int):
+	current_health -= amount
+	current_health = max(0, current_health)
+	
+	# Emit health changed signal
+	health_changed.emit(current_health)
+	
+	# Visual damage feedback
+	if sprite:
+		var tween = create_tween()
+		tween.tween_method(set_sprite_modulate, Color.WHITE, Color.RED, 0.1)
+		tween.tween_method(set_sprite_modulate, Color.RED, Color.WHITE, 0.1)
+	
+	# Check if player died
+	if current_health <= 0:
+		player_died.emit()
+		# Optional: disable movement or restart game
+		print("Player died!")
+
+func heal(amount: int):
+	current_health += amount
+	current_health = min(max_health, current_health)
+	health_changed.emit(current_health)
+
+func get_health() -> int:
+	return current_health
+
+func get_max_health() -> int:
+	return max_health
