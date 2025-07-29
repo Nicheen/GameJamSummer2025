@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://eppnqq6ap33r"]
+[gd_scene load_steps=13 format=3 uid="uid://eppnqq6ap33r"]
 
 [ext_resource type="Script" uid="uid://57mwgwgrtt80" path="res://scripts/obj/projectile/projectile.gd" id="1_projectile_main"]
 [ext_resource type="Script" uid="uid://c67rqomxck2ae" path="res://scripts/obj/projectile/projectile_collision_handler.gd" id="2_collision_handler"]
@@ -12,6 +12,32 @@ bounce = 0.8
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
 radius = 8.06226
+
+[sub_resource type="Gradient" id="Gradient_aqdnr"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_x1qnq"]
+gradient = SubResource("Gradient_aqdnr")
+
+[sub_resource type="Curve" id="Curve_h011q"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.617978), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_e6gd3"]
+curve = SubResource("Curve_h011q")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jg88d"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(10, 1, 1)
+emission_shape = 1
+emission_sphere_radius = 1.0
+gravity = Vector3(0, 98, 0)
+damping_max = 20.0
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_e6gd3")
+scale_over_velocity_max = 116.67
+color_ramp = SubResource("GradientTexture1D_x1qnq")
+turbulence_enabled = true
 
 [node name="Projectile" type="RigidBody2D"]
 collision_layer = 2
@@ -65,3 +91,7 @@ offset_right = 30.0
 offset_bottom = 60.0
 text = "999"
 horizontal_alignment = 1
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
+amount = 20
+process_material = SubResource("ParticleProcessMaterial_jg88d")

@@ -273,16 +273,9 @@ func setup_ui():
 	# Score label
 	score_label = Label.new()
 	score_label.text = "Score: 0"
-	score_label.position = Vector2(20, 20)
-	score_label.add_theme_font_size_override("font_size", 24)
+	score_label.position = Vector2(play_area_center.x - 65, play_area_center.y - 16)
+	score_label.add_theme_font_size_override("font_size", 32)
 	ui_layer.add_child(score_label)
-	
-	# Enemies remaining label
-	enemies_remaining_label = Label.new()
-	enemies_remaining_label.text = "Enemies: " + str(total_enemies)
-	enemies_remaining_label.position = Vector2(20, 50)
-	enemies_remaining_label.add_theme_font_size_override("font_size", 20)
-	ui_layer.add_child(enemies_remaining_label)
 	
 func _on_player_died():
 	print("Player died! Final score: ", current_score)
