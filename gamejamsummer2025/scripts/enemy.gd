@@ -98,23 +98,97 @@ func play_death_effect():
 		queue_free()
 		return
 	
-	# Death animation
-	var tween = create_tween()
-	tween.set_parallel(true)
-	
-	# Fade out and scale up
-	tween.tween_property(sprite, "modulate", Color.TRANSPARENT, 0.5)
-	tween.tween_property(sprite, "scale", sprite.scale * 2.0, 0.5)
-	tween.tween_property(self, "rotation", PI * 2, 0.5)
-	
-	# Disable collision
+	# Disable collision immediately
 	if collision_shape:
 		collision_shape.disabled = true
+	
+	# Hide health bar
+	if health_bar:
+		health_bar.visible = false
+	
+	# Create explosion effect with sequential phases
+	var tween = create_tween()
+	
+	# Phase 1: Quick expansion and flash to yellow (explosion start)
+	tween.parallel().tween_property(sprite, "scale", sprite.scale * 1.8, 0.15)
+	tween.parallel().tween_property(sprite, "modulate", Color.YELLOW, 0.1)
+	
+	# Phase 2: Bright flash to white (explosion peak)
+	tween.tween_property(sprite, "modulate", Color.WHITE, 0.05)
+	
+	# Phase 3: Rapid expansion with color change (explosion expansion)
+	tween.parallel().tween_property(sprite, "scale", sprite.scale * 3.5, 0.2)
+	tween.parallel().tween_property(sprite, "modulate", Color.ORANGE, 0.15)
+	
+	# Phase 4: Final expansion and fade (explosion dissipation)
+	tween.parallel().tween_property(sprite, "scale", sprite.scale * 5.0, 0.25)
+	tween.parallel().tween_property(sprite, "modulate", Color.TRANSPARENT, 0.25)
+	
+	# Optional: Add some particles or additional visual effects
+	create_explosion_particles()
 	
 	# Wait for animation then destroy
 	await tween.finished
 	queue_free()
 
+# Optional: Create simple particle-like effects for explosion
+func create_explosion_particles():
+	# Create several small "debris" sprites that fly outward
+	for i in range(6):
+		var particle = Sprite2D.new()
+		particle.texture = sprite.texture
+		particle.scale = Vector2(0.1, 0.1)
+		particle.modulate = Color.ORANGE
+		particle.global_position = global_position
+		
+		# Add to parent scene
+		get_parent().add_child(particle)
+		
+		# Random direction and distance
+		var angle = randf() * TAU  # Full circle in radians
+		var distance = randf_range(50, 150)
+		var target_pos = global_position + Vector2(cos(angle), sin(angle)) * distance
+		
+		# Animate particle
+		var particle_tween = create_tween()
+		particle_tween.set_parallel(true)
+		particle_tween.tween_property(particle, "global_position", target_pos, 0.4)
+		particle_tween.tween_property(particle, "modulate", Color.TRANSPARENT, 0.4)
+		particle_tween.tween_property(particle, "scale", Vector2.ZERO, 0.4)
+		
+		# Clean up particle
+		particle_tween.finished.connect(func(): particle.queue_free())
+
+# Alternative simpler explosion effect (if you prefer less particles)
+func play_simple_explosion_effect():
+	if not sprite:
+		queue_free()
+		return
+	
+	# Disable collision
+	if collision_shape:
+		collision_shape.disabled = true
+	if health_bar:
+		health_bar.visible = false
+	
+	# Simple but effective explosion
+	var tween = create_tween()
+	tween.set_parallel(true)
+	
+	# Quick flash and expand
+	tween.tween_property(sprite, "modulate", Color.WHITE, 0.05)
+	tween.tween_property(sprite, "scale", sprite.scale * 2.5, 0.2)
+	
+	# Fade to orange/red and continue expanding
+	tween.tween_property(sprite, "modulate", Color.ORANGE_RED, 0.15)
+	tween.tween_property(sprite, "scale", sprite.scale * 4.0, 0.3)
+	
+	# Final fade out
+	tween.tween_property(sprite, "modulate", Color.TRANSPARENT, 0.2)
+	
+	await tween.finished
+	queue_free()
+	
 func get_health() -> int:
 	return current_health
 
