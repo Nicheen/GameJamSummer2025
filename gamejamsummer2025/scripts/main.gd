@@ -7,6 +7,7 @@ extends Node2D
 # Hardcoded scene paths
 const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
 const ENEMY_SCENE = "res://scenes/obj/Enemy.tscn"
+const ENEMY_KVADRAT_SCENE = "res://scenes/obj/Enemy_kvadrat.tscn"
 const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
 const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
 const WIN_MENU_SCENE = "res://scenes/menus/win_menu.tscn"
@@ -17,6 +18,7 @@ var pause_menu: Control
 var death_menu: Control
 var win_menu: Control
 var enemies: Array[CharacterBody2D] = []
+var blocks: Array[CharacterBody2D] = []
 
 # Game state
 var current_score: int = 0
@@ -33,6 +35,7 @@ func _ready():
 	setup_play_area()
 	spawn_enemies()
 	spawn_player()
+	spawn_enemy_kvadrat()
 	setup_pause_menu()
 	setup_death_menu()
 	setup_win_menu()
@@ -77,6 +80,47 @@ func spawn_enemy_at_position(position: Vector2):
 	
 	print("Spawned enemy at: ", position)
 	
+func spawn_enemy_kvadrat():
+	var enemy_positions = [
+		Vector2(926, 324),
+		Vector2(876, 324),
+		Vector2(826, 324),
+		Vector2(776, 324),
+		Vector2(726, 324),
+		Vector2(676, 324), 
+		Vector2(626, 324),
+		Vector2(576, 324), 
+		Vector2(526, 324),
+		Vector2(476, 324), 
+		Vector2(426, 324),
+		Vector2(376, 324), 
+		Vector2(326, 324),
+		Vector2(276, 324), 
+		Vector2(226, 324),
+		
+	]
+	for pos in enemy_positions:
+		spawn_enemy_kvadrat_at_position(pos)
+
+func spawn_enemy_kvadrat_at_position(position: Vector2):
+	var block_scene = load(ENEMY_KVADRAT_SCENE)  # Ladda kvadrat-scenen
+	if not block_scene:
+		print("ERROR: Could not load enemy kvadrat scene at: ", ENEMY_KVADRAT_SCENE)
+		return
+	
+	var block = block_scene.instantiate()
+	block.global_position = position
+	
+	# Connect enemy signals
+	block.block_died.connect(_on_enemy_died)
+	block.block_hit.connect(_on_enemy_hit)
+	
+	add_child(block)
+	blocks.append(block)
+	total_enemies += 1
+	
+	print("Spawned kvadrat enemy at: ", position)
+		
 func spawn_player():
 	# Load and instantiate the player scene
 	var player_scene = load(PLAYER_SCENE)
