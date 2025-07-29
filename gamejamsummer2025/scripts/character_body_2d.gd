@@ -13,7 +13,7 @@ extends CharacterBody2D
 # Shooting settings
 @export var projectile_scene: PackedScene = load("res://scenes/obj/Projectile.tscn")
 @export var projectile_speed: float = 500.0
-@export var shoot_cooldown: float = 0.3
+@export var shoot_cooldown: float = 0.1
 
 # Health settings
 @export var max_health: int = 100
