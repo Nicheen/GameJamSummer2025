@@ -9,11 +9,13 @@ const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
 const ENEMY_SCENE = "res://scenes/obj/Enemy.tscn"
 const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
 const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
+const WIN_MENU_SCENE = "res://scenes/menus/win_menu.tscn"
 
 # Game objects
 var player: CharacterBody2D
 var pause_menu: Control
 var death_menu: Control
+var win_menu: Control
 var enemies: Array[CharacterBody2D] = []
 
 # Game state
@@ -33,6 +35,7 @@ func _ready():
 	spawn_player()
 	setup_pause_menu()
 	setup_death_menu()
+	setup_win_menu()
 	setup_ui()
 	
 	print("Game scene ready!")
@@ -41,6 +44,7 @@ func _ready():
 func setup_play_area():
 	# Create grid background
 	create_grid_background()
+	
 func spawn_enemies():
 	# Spawn enemies in the middle area
 	var enemy_positions = [
@@ -109,6 +113,14 @@ func setup_death_menu():
 	add_child(death_menu)
 	
 	print("Death menu setup complete")
+
+func setup_win_menu():
+	# Load and instantiate the win menu
+	var win_menu_scene = load(WIN_MENU_SCENE)
+	win_menu = win_menu_scene.instantiate()
+	add_child(win_menu)
+	
+	print("Win menu setup complete")
 	
 func setup_ui():
 	# Create UI layer
@@ -164,20 +176,15 @@ func player_wins():
 	game_won = true
 	print("PLAYER WINS! Final score: ", current_score)
 	
-	# Show victory screen (reuse death menu but with different text)
-	if death_menu and death_menu.has_method("show_death_menu"):
-		update_death_menu_score()
-		# You could modify the death menu to show "YOU WIN!" instead
-		death_menu.show_death_menu()
+	# Show win menu with score
+	if win_menu and win_menu.has_method("show_win_menu"):
+		win_menu.show_win_menu(current_score)
 
 func update_death_menu_score():
 	# Update the score label in death menu
 	var score_label_in_death_menu = death_menu.get_node_or_null("Panel/VBoxContainer/ScoreLabel")
 	if score_label_in_death_menu:
-		if game_won:
-			score_label_in_death_menu.text = "YOU WIN! Final Score: " + str(current_score)
-		else:
-			score_label_in_death_menu.text = "Final Score: " + str(current_score)
+		score_label_in_death_menu.text = "Final Score: " + str(current_score)
 			
 func update_ui():
 	if score_label:

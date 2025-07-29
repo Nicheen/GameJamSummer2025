@@ -18,14 +18,10 @@ func show_death_menu():
 	
 	# Optional: Grab focus on restart button
 	$Panel/VBoxContainer/btn_restart.grab_focus()
-	
-	print("Death menu shown")
 
 func hide_death_menu():
 	visible = false
 	get_tree().paused = false
-	
-	print("Death menu hidden")
 
 func _on_restart_pressed():
 	print("Restarting game...")
