@@ -308,7 +308,7 @@ func spawn_enemy_lazer():
 	
 	# Spawna lazer-block
 	available_positions.shuffle()
-	var lazer_count = min(10, available_positions.size())  # 10 lazer-block
+	var lazer_count = min(2, available_positions.size())  # 10 lazer-block
 	
 	for i in range(lazer_count):
 		spawn_enemy_lazer_at_position(available_positions[i])
@@ -328,19 +328,20 @@ func spawn_enemy_lazer_at_position(position: Vector2):
 	var thunder_effect = thunder_scene.instantiate()
 	
 	lazer_block.global_position = position
-	thunder_effect.global_position = position
+	
+	# Add thunder as child of lazer block with relative positioning
+	lazer_block.add_child(thunder_effect)
+	thunder_effect.position = Vector2(5, 15)  # Relative to lazer block
 	
 	# Connect signals with distortion effects - pass position in closure
 	lazer_block.block_died.connect(func(score_points): _on_lazer_block_died_with_distortion(score_points, position))
 	lazer_block.block_hit.connect(_on_enemy_hit)
 	
 	add_child(lazer_block)
-	add_child(thunder_effect)
 	lazer_blocks.append(lazer_block)
 	total_enemies += 1
 	
 	print("Spawned lazer block at: ", position)
-	
 func spawn_player():
 	# Load and instantiate the player scene
 	var player_scene = load(PLAYER_SCENE)
