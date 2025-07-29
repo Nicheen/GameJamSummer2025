@@ -12,6 +12,7 @@ const ENEMY_BLOCK_LAZER_SCENE = "res://scenes/obj/blocks/BlockLazer.tscn"
 const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
 const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
 const WIN_MENU_SCENE = "res://scenes/menus/win_menu.tscn"
+const THUNDER = "res://effects/thunder.tscn"
 
 # Game objects
 var player: CharacterBody2D
@@ -202,18 +203,27 @@ func spawn_enemy_lazer():
 
 func spawn_enemy_lazer_at_position(position: Vector2):
 	var lazer_scene = load(ENEMY_BLOCK_LAZER_SCENE)
+	var thunder_scene = load(THUNDER)
 	if not lazer_scene:
 		print("ERROR: Could not load enemy lazer scene at: ", ENEMY_BLOCK_LAZER_SCENE)
 		return
-	
+		
+	if not thunder_scene:
+		print("ERROR: Could not load thunder effect scene at: ", THUNDER)
+		return
+		
 	var lazer_block = lazer_scene.instantiate()
+	var thunder_effect = thunder_scene.instantiate()
+	
 	lazer_block.global_position = position
+	thunder_effect.global_position = position
 	
 	# Connect signals (samma som vanliga block)
 	lazer_block.block_died.connect(_on_enemy_died)
 	lazer_block.block_hit.connect(_on_enemy_hit)
 	
 	add_child(lazer_block)
+	add_child(thunder_effect)
 	lazer_blocks.append(lazer_block)
 	total_enemies += 1
 	

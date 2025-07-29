@@ -1,14 +1,14 @@
 [gd_scene load_steps=19 format=3 uid="uid://b4npt30yvwa8q"]
 
-[ext_resource type="Shader" uid="uid://p4sq8j8384o8" path="res://images/textures/thunder_shader.tres" id="1_k3uro"]
-[ext_resource type="Texture2D" uid="uid://b78sbgpdxkhcs" path="res://images/textures/VFX_Thunder.jpg" id="2_ed3uq"]
-[ext_resource type="Texture2D" uid="uid://c65h8mkqgajjv" path="res://images/textures/VFX_NOEL_CIRCLE.jpg" id="3_ed3uq"]
+[ext_resource type="Shader" uid="uid://p4sq8j8384o8" path="res://images/textures/thunder_shader.tres" id="1_2jacu"]
+[ext_resource type="Texture2D" uid="uid://b78sbgpdxkhcs" path="res://images/textures/VFX_Thunder.jpg" id="2_ghp0e"]
+[ext_resource type="Texture2D" uid="uid://c65h8mkqgajjv" path="res://images/textures/VFX_NOEL_CIRCLE.jpg" id="3_x802k"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_16fuu"]
-shader = ExtResource("1_k3uro")
+shader = ExtResource("1_2jacu")
 shader_parameter/Vanishing_Value = 1.0
 shader_parameter/Speed = Vector2(-2, 0)
-shader_parameter/basic_texture = ExtResource("2_ed3uq")
+shader_parameter/basic_texture = ExtResource("2_ghp0e")
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_16fuu"]
 blend_mode = 1
@@ -245,7 +245,7 @@ texture_mode = 2
 material = SubResource("CanvasItemMaterial_16fuu")
 position = Vector2(613, 649)
 amount = 16
-texture = ExtResource("3_ed3uq")
+texture = ExtResource("3_x802k")
 lifetime = 0.15
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_lebgi")
@@ -254,7 +254,7 @@ process_material = SubResource("ParticleProcessMaterial_lebgi")
 material = SubResource("CanvasItemMaterial_6w4db")
 position = Vector2(613, 649)
 amount = 1
-texture = ExtResource("3_ed3uq")
+texture = ExtResource("3_x802k")
 lifetime = 0.15
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_g8jpf")
@@ -264,7 +264,7 @@ visible = false
 position = Vector2(613, 649)
 color = Color(1, 0.862745, 0.0156863, 1)
 energy = 0.0
-texture = ExtResource("3_ed3uq")
+texture = ExtResource("3_x802k")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
