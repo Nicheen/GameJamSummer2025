@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bxsxsg8svbiye"]
 
 [ext_resource type="Script" uid="uid://hxs1sdtlbjeo" path="res://scripts/menus/main_menu.gd" id="1_ovrgc"]
-[ext_resource type="Texture2D" uid="uid://bv4ck722pm8rj" path="res://images/not_pong_background.svg" id="2_ovrgc"]
+[ext_resource type="Texture2D" uid="uid://cgppme0qncc68" path="res://images/background.svg" id="2_ovrgc"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -19,10 +19,10 @@ expand_mode = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 0
-offset_left = 444.0
-offset_top = 267.0
-offset_right = 707.0
-offset_bottom = 412.0
+offset_left = 432.0
+offset_top = 268.0
+offset_right = 723.0
+offset_bottom = 407.0
 alignment = 1
 
 [node name="btn_start" type="Button" parent="VBoxContainer"]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bv4ck722pm8rj"
-path="res://.godot/imported/not_pong_background.svg-19ec27fd5dad339d55cc0f84f12ba99d.ctex"
+uid="uid://cgppme0qncc68"
+path="res://.godot/imported/background.svg-d726074f6ea7d8b46d39e665f09785be.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/not_pong_background.svg"
-dest_files=["res://.godot/imported/not_pong_background.svg-19ec27fd5dad339d55cc0f84f12ba99d.ctex"]
+source_file="res://images/background.svg"
+dest_files=["res://.godot/imported/background.svg-d726074f6ea7d8b46d39e665f09785be.ctex"]
 
 [params]
 
