@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bxsxsg8svbiye"]
 
-[ext_resource type="Script" uid="uid://hxs1sdtlbjeo" path="res://scripts/main_menu.gd" id="1_ovrgc"]
+[ext_resource type="Script" uid="uid://hxs1sdtlbjeo" path="res://scripts/menus/main_menu.gd" id="1_ovrgc"]
 [ext_resource type="Texture2D" uid="uid://cc4t6edh6d5p4" path="res://images/not_pong_main_menu_background.png" id="2_2o76q"]
 
 [node name="MainMenu" type="Control"]

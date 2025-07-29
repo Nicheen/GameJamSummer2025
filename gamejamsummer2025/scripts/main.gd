@@ -7,8 +7,8 @@ extends Node2D
 # Hardcoded scene paths
 const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
 const ENEMY_SCENE = "res://scenes/obj/Enemy.tscn"
-const ENEMY_BLOCK_SCENE = "res://scenes/obj/Enemy_Block.tscn"
-const ENEMY_BLOCK_LAZER_SCENE = "res://scenes/obj/Enemy_Block_Lazer.tscn"
+const ENEMY_BLOCK_SCENE = "res://scenes/obj/blocks/Block.tscn"
+const ENEMY_BLOCK_LAZER_SCENE = "res://scenes/obj/blocks/BlockLazer.tscn"
 const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
 const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
 const WIN_MENU_SCENE = "res://scenes/menus/win_menu.tscn"
