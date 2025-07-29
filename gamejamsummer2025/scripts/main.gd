@@ -19,6 +19,7 @@ var death_menu: Control
 var win_menu: Control
 var enemies: Array[CharacterBody2D] = []
 var blocks: Array[CharacterBody2D] = []
+var all_spawn_positions: Array[Vector2] = []
 
 # Game state
 var current_score: int = 0
@@ -33,9 +34,10 @@ var enemies_remaining_label: Label
 func _ready():
 	# Set up the game
 	setup_play_area()
-	spawn_enemies()
+	generate_spawn_positions()
+	spawn_enemy_kvadrat() #ordningen spelar roll här
+	spawn_enemies() #ordningen spelar roll här 
 	spawn_player()
-	spawn_enemy_kvadrat()
 	setup_pause_menu()
 	setup_death_menu()
 	setup_win_menu()
@@ -49,17 +51,33 @@ func setup_play_area():
 	create_grid_background()
 	
 func spawn_enemies():
-	# Spawn enemies in the middle area
-	var enemy_positions = [
-		Vector2(576, 324),  # Center of screen
-		Vector2(400, 250),  # Left-center
-		Vector2(750, 250),  # Right-center
-		Vector2(576, 200),  # Upper-center
-		Vector2(576, 450),  # Lower-center
-	]
+	# Samla alla använda positioner från kvadrater
+	var used_positions: Array[Vector2] = []
+	for block in blocks:
+		used_positions.append(block.global_position)
 	
-	for pos in enemy_positions:
-		spawn_enemy_at_position(pos)
+	# Skapa en set av använda positioner som strängar för exakt jämförelse
+	var used_position_strings: Array[String] = []
+	for pos in used_positions:
+		used_position_strings.append(str(pos.x) + "," + str(pos.y))
+	
+	# Hitta lediga positioner
+	var available_positions: Array[Vector2] = []
+	for pos in all_spawn_positions:
+		var pos_string = str(pos.x) + "," + str(pos.y)
+		
+		if not pos_string in used_position_strings:
+			available_positions.append(pos)
+	
+	print("Blocks spawned at: ", used_positions.size(), " positions")
+	print("Available positions: ", available_positions.size())
+	
+	# Spawna enemies
+	available_positions.shuffle()
+	var enemy_count = min(5, available_positions.size())
+	
+	for i in range(enemy_count):
+		spawn_enemy_at_position(available_positions[i])
 
 func spawn_enemy_at_position(position: Vector2):
 	var enemy_scene = load(ENEMY_SCENE)
@@ -80,27 +98,57 @@ func spawn_enemy_at_position(position: Vector2):
 	
 	print("Spawned enemy at: ", position)
 	
+func generate_spawn_positions():
+	# Rensa eventuella befintliga positioner
+	all_spawn_positions.clear()
+	
+	# X-positioner (15 kolumner)
+	var x_positions = [926, 876, 826, 776, 726, 676, 626, 576, 526, 476, 426, 376, 326, 276, 226]
+	
+	# Y-positioner (9 rader: 4 ovanför, mitten, 4 nedanför)
+	var y_positions = [124, 174, 224, 274, 324, 374, 424, 474, 524]
+	
+	# Skapa alla kombinationer
+	for x in x_positions:
+		for y in y_positions:
+			all_spawn_positions.append(Vector2(x, y))
+	
+	print("Generated ", all_spawn_positions.size(), " spawn positions")
+
+func get_random_spawn_positions(count: int) -> Array[Vector2]:
+	# Returnera random urval av spawn-positioner
+	var available_positions = all_spawn_positions.duplicate()
+	available_positions.shuffle()
+	
+	var selected_count = min(count, available_positions.size())
+	return available_positions.slice(0, selected_count)
+
+func get_all_spawn_positions() -> Array[Vector2]:
+	# Returnera alla spawn-positioner
+	return all_spawn_positions.duplicate()
+
 func spawn_enemy_kvadrat():
-	var enemy_positions = [
-		Vector2(926, 324),
-		Vector2(876, 324),
-		Vector2(826, 324),
-		Vector2(776, 324),
-		Vector2(726, 324),
-		Vector2(676, 324), 
-		Vector2(626, 324),
-		Vector2(576, 324), 
-		Vector2(526, 324),
-		Vector2(476, 324), 
-		Vector2(426, 324),
-		Vector2(376, 324), 
-		Vector2(326, 324),
-		Vector2(276, 324), 
-		Vector2(226, 324),
-		
-	]
-	for pos in enemy_positions:
+	# Använd den nya funktionen
+	var selected_positions = get_random_spawn_positions(20)
+	
+	for pos in selected_positions:
 		spawn_enemy_kvadrat_at_position(pos)
+
+func spawn_random_enemies(count: int):
+	# Förenklad version
+	var selected_positions = get_random_spawn_positions(count)
+	
+	for pos in selected_positions:
+		spawn_enemy_kvadrat_at_position(pos)
+
+# Exempel: Spawna bossar på specifika positioner
+func spawn_boss_at_center():
+	# Hitta center-positioner
+	var center_positions = all_spawn_positions.filter(func(pos): return pos.y == 324)
+	var boss_pos = center_positions[center_positions.size() / 2]  # Mitten av center-raden
+	
+	# Spawna boss här...
+	print("Spawning boss at: ", boss_pos)
 
 func spawn_enemy_kvadrat_at_position(position: Vector2):
 	var block_scene = load(ENEMY_KVADRAT_SCENE)  # Ladda kvadrat-scenen
