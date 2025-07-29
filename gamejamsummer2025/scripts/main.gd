@@ -308,7 +308,7 @@ func spawn_enemy_lazer():
 	
 	# Spawna lazer-block
 	available_positions.shuffle()
-	var lazer_count = min(10, available_positions.size())  # 10 lazer-block
+	var lazer_count = min(2, available_positions.size())  # 10 lazer-block
 	
 	for i in range(lazer_count):
 		spawn_enemy_lazer_at_position(available_positions[i])
