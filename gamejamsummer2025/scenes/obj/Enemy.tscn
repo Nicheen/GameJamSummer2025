@@ -1,10 +1,10 @@
 [gd_scene load_steps=4 format=3 uid="uid://mhneu5sufe2j"]
 
-[ext_resource type="Script" uid="uid://cfxv5qdy0ce0w" path="res://scripts/Enemy.gd" id="1_enemy_script"]
-[ext_resource type="Texture2D" uid="uid://cld2l1b5hqkts" path="res://images/projectile.png" id="2_455qr"]
+[ext_resource type="Script" uid="uid://cfxv5qdy0ce0w" path="res://scripts/enemy.gd" id="1_enemy_script"]
+[ext_resource type="Texture2D" uid="uid://go0jsjs2iejv" path="res://images/white_circle.svg" id="2_gsmpp"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_enemy"]
-size = Vector2(64, 64)
+[sub_resource type="CircleShape2D" id="CircleShape2D_455qr"]
+radius = 16.0
 
 [node name="Enemy" type="CharacterBody2D"]
 collision_layer = 16
@@ -14,10 +14,10 @@ script = ExtResource("1_enemy_script")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 modulate = Color(1, 0.5, 0.5, 1)
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("2_455qr")
+texture = ExtResource("2_gsmpp")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_enemy")
+shape = SubResource("CircleShape2D_455qr")
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 offset_left = -32.0

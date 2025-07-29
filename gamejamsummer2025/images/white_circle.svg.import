@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cld2l1b5hqkts"
-path="res://.godot/imported/projectile.png-677cc17c75d144b24ef7dd3ba5e08608.ctex"
+uid="uid://go0jsjs2iejv"
+path="res://.godot/imported/white_circle.svg-984abd3b8184787fee438012298f6286.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/projectile.png"
-dest_files=["res://.godot/imported/projectile.png-677cc17c75d144b24ef7dd3ba5e08608.ctex"]
+source_file="res://images/white_circle.svg"
+dest_files=["res://.godot/imported/white_circle.svg-984abd3b8184787fee438012298f6286.ctex"]
 
 [params]
 
@@ -32,3 +32,6 @@ process/hdr_as_srgb=false
 process/hdr_clamp_exposure=false
 process/size_limit=0
 detect_3d/compress_to=1
+svg/scale=1.0
+editor/scale_with_editor_scale=false
+editor/convert_colors_with_editor_theme=false
