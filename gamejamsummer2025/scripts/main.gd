@@ -7,7 +7,8 @@ extends Node2D
 # Hardcoded scene paths
 const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
 const ENEMY_SCENE = "res://scenes/obj/Enemy.tscn"
-const ENEMY_KVADRAT_SCENE = "res://scenes/obj/Enemy_kvadrat.tscn"
+const ENEMY_BLOCK_SCENE = "res://scenes/obj/Enemy_Block.tscn"
+const ENEMY_BLOCK_LAZER_SCENE = "res://scenes/obj/Enemy_Block_Lazer.tscn"
 const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
 const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
 const WIN_MENU_SCENE = "res://scenes/menus/win_menu.tscn"
@@ -19,6 +20,7 @@ var death_menu: Control
 var win_menu: Control
 var enemies: Array[CharacterBody2D] = []
 var blocks: Array[CharacterBody2D] = []
+var lazer_blocks: Array[CharacterBody2D] = []
 var all_spawn_positions: Array[Vector2] = []
 
 # Game state
@@ -37,6 +39,7 @@ func _ready():
 	generate_spawn_positions()
 	spawn_enemy_kvadrat() #ordningen spelar roll här
 	spawn_enemies() #ordningen spelar roll här 
+	spawn_enemy_lazer()  #ordningen spelar roll här 
 	spawn_player()
 	setup_pause_menu()
 	setup_death_menu()
@@ -151,9 +154,9 @@ func spawn_boss_at_center():
 	print("Spawning boss at: ", boss_pos)
 
 func spawn_enemy_kvadrat_at_position(position: Vector2):
-	var block_scene = load(ENEMY_KVADRAT_SCENE)  # Ladda kvadrat-scenen
+	var block_scene = load(ENEMY_BLOCK_SCENE)  # Ladda kvadrat-scenen
 	if not block_scene:
-		print("ERROR: Could not load enemy kvadrat scene at: ", ENEMY_KVADRAT_SCENE)
+		print("ERROR: Could not load enemy kvadrat scene at: ", ENEMY_BLOCK_SCENE)
 		return
 	
 	var block = block_scene.instantiate()
@@ -168,7 +171,54 @@ func spawn_enemy_kvadrat_at_position(position: Vector2):
 	total_enemies += 1
 	
 	print("Spawned kvadrat enemy at: ", position)
-		
+	
+	# Lägg till spawn-funktioner:
+func spawn_enemy_lazer():
+	# Samla alla använda positioner från block och lazer-block
+	var used_positions: Array[Vector2] = []
+	for block in blocks:
+		used_positions.append(block.global_position)
+	for lazer_block in lazer_blocks:
+		used_positions.append(lazer_block.global_position)
+	
+	# Skapa set av använda positioner
+	var used_position_strings: Array[String] = []
+	for pos in used_positions:
+		used_position_strings.append(str(pos.x) + "," + str(pos.y))
+	
+	# Hitta lediga positioner
+	var available_positions: Array[Vector2] = []
+	for pos in all_spawn_positions:
+		var pos_string = str(pos.x) + "," + str(pos.y)
+		if not pos_string in used_position_strings:
+			available_positions.append(pos)
+	
+	# Spawna lazer-block
+	available_positions.shuffle()
+	var lazer_count = min(10, available_positions.size())  # 10 lazer-block
+	
+	for i in range(lazer_count):
+		spawn_enemy_lazer_at_position(available_positions[i])
+
+func spawn_enemy_lazer_at_position(position: Vector2):
+	var lazer_scene = load(ENEMY_BLOCK_LAZER_SCENE)
+	if not lazer_scene:
+		print("ERROR: Could not load enemy lazer scene at: ", ENEMY_BLOCK_LAZER_SCENE)
+		return
+	
+	var lazer_block = lazer_scene.instantiate()
+	lazer_block.global_position = position
+	
+	# Connect signals (samma som vanliga block)
+	lazer_block.block_died.connect(_on_enemy_died)
+	lazer_block.block_hit.connect(_on_enemy_hit)
+	
+	add_child(lazer_block)
+	lazer_blocks.append(lazer_block)
+	total_enemies += 1
+	
+	print("Spawned lazer block at: ", position)
+	
 func spawn_player():
 	# Load and instantiate the player scene
 	var player_scene = load(PLAYER_SCENE)

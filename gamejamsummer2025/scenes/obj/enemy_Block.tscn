@@ -1,20 +1,20 @@
 [gd_scene load_steps=4 format=3 uid="uid://bratwmq3f1ph3"]
 
-[ext_resource type="Script" uid="uid://cdvdmyb0wm0kp" path="res://scripts/enemy_kvadrat.gd" id="1_eo5g6"]
-[ext_resource type="Texture2D" uid="uid://dgg1f2dgvhw1c" path="res://images/red_square.svg" id="1_vwaen"]
+[ext_resource type="Script" uid="uid://cdvdmyb0wm0kp" path="res://scripts/enemy_kvadrat.gd" id="1_iewo1"]
+[ext_resource type="Texture2D" uid="uid://dgg1f2dgvhw1c" path="res://images/red_square.svg" id="2_pb5dn"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eo5g6"]
 size = Vector2(30, 30)
 
-[node name="EnemyKvadrat" type="CharacterBody2D"]
+[node name="EnemyBlock" type="CharacterBody2D"]
 collision_layer = 16
 collision_mask = 0
-script = ExtResource("1_eo5g6")
+script = ExtResource("1_iewo1")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(-5.06639e-07, -5.06639e-07)
 scale = Vector2(0.53125, 0.53125)
-texture = ExtResource("1_vwaen")
+texture = ExtResource("2_pb5dn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_eo5g6")
