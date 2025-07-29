@@ -196,38 +196,64 @@ func spawn_enemy_lazer():
 	
 	# Spawna lazer-block
 	available_positions.shuffle()
-	var lazer_count = min(10, available_positions.size())  # 10 lazer-block
+	var lazer_count = min(2, available_positions.size())  # 10 lazer-block
 	
 	for i in range(lazer_count):
 		spawn_enemy_lazer_at_position(available_positions[i])
 
 func spawn_enemy_lazer_at_position(position: Vector2):
 	var lazer_scene = load(ENEMY_BLOCK_LAZER_SCENE)
-	var thunder_scene = load(THUNDER)
 	if not lazer_scene:
 		print("ERROR: Could not load enemy lazer scene at: ", ENEMY_BLOCK_LAZER_SCENE)
 		return
-		
-	if not thunder_scene:
-		print("ERROR: Could not load thunder effect scene at: ", THUNDER)
-		return
-		
-	var lazer_block = lazer_scene.instantiate()
-	var thunder_effect = thunder_scene.instantiate()
 	
+	var lazer_block = lazer_scene.instantiate()
 	lazer_block.global_position = position
-	thunder_effect.global_position = position
 	
 	# Connect signals (samma som vanliga block)
 	lazer_block.block_died.connect(_on_enemy_died)
 	lazer_block.block_hit.connect(_on_enemy_hit)
 	
 	add_child(lazer_block)
-	add_child(thunder_effect)
 	lazer_blocks.append(lazer_block)
 	total_enemies += 1
 	
+	# Skapa timer för blixtnedslag
+	create_thunder_timer(lazer_block, position)
+	
 	print("Spawned lazer block at: ", position)
+
+func create_thunder_timer(lazer_block: Node, block_position: Vector2):
+	# Skapa en timer för detta specifika block
+	var thunder_timer = Timer.new()
+	thunder_timer.wait_time = 5.0  # 5 sekunder
+	thunder_timer.one_shot = false  # Upprepa
+	thunder_timer.autostart = true
+	
+	# Lägg till timer som barn till lazer-blocket
+	lazer_block.add_child(thunder_timer)
+	
+	# Anslut timer-signalen
+	thunder_timer.timeout.connect(func(): spawn_thunder_effect(lazer_block, block_position))
+	
+	print("Thunder timer created for lazer block at: ", block_position)
+
+func spawn_thunder_effect(lazer_block: Node, block_position: Vector2):
+	if not is_instance_valid(lazer_block) or lazer_block.is_queued_for_deletion():
+		return
+	
+	var thunder_scene = load(THUNDER)
+	if not thunder_scene:
+		return
+	
+	var thunder_effect = thunder_scene.instantiate()
+	
+	add_child(thunder_effect)
+	
+	# Ändra från +50 till +20 pixlar under blocket
+	thunder_effect.global_position = Vector2(lazer_block.global_position.x, lazer_block.global_position.y + 15)
+	
+	print("Thunder positioned at: ", thunder_effect.global_position)
 	
 func spawn_player():
 	# Load and instantiate the player scene
