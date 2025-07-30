@@ -1,8 +1,11 @@
-[gd_scene load_steps=16 format=3 uid="uid://cj36iyr5bw5pe"]
+[gd_scene load_steps=19 format=3 uid="uid://cj36iyr5bw5pe"]
 
 [ext_resource type="Script" uid="uid://c2dkvm0rwmi1d" path="res://scripts/main.gd" id="1_elqb8"]
 [ext_resource type="Texture2D" uid="uid://c65h8mkqgajjv" path="res://images/textures/VFX_NOEL_CIRCLE.jpg" id="2_rvslj"]
-[ext_resource type="Script" uid="uid://8fvtdceyak8j" path="res://scripts/level_manager.gd" id="3_0bbpv"]
+[ext_resource type="Script" path="res://scripts/level_manager.gd" id="3_0bbpv"]
+[ext_resource type="PackedScene" uid="uid://dc25tu6hyq1e2" path="res://scenes/menus/hud.tscn" id="3_sugp2"]
+[ext_resource type="Script" uid="uid://jranj8pqoox8" path="res://scenes/bounds.gd" id="5_tbgi4"]
+[ext_resource type="Script" uid="uid://2stp3m5gk2bv" path="res://scenes/spawner.gd" id="6_tefeu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o5qli"]
 size = Vector2(200, 648)
@@ -133,3 +136,20 @@ environment = SubResource("Environment_o5qli")
 
 [node name="LevelManager" type="Node" parent="."]
 script = ExtResource("3_0bbpv")
+
+[node name="Bounds" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5_tbgi4")
+
+[node name="UpperLeft" type="Marker2D" parent="Bounds"]
+unique_name_in_owner = true
+
+[node name="LowerRight" type="Marker2D" parent="Bounds"]
+unique_name_in_owner = true
+position = Vector2(1152, 637)
+
+[node name="Hud" parent="." instance=ExtResource("3_sugp2")]
+
+[node name="Spawner" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_tefeu")
