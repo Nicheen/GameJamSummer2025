@@ -15,6 +15,7 @@ const WIN_MENU_SCENE = "res://scenes/menus/win_menu.tscn"
 const THUNDER = "res://effects/thunder.tscn"
 
 # Game objects
+var level_manager: Node
 var player: CharacterBody2D
 var pause_menu: Control
 var death_menu: Control
@@ -25,6 +26,7 @@ var lazer_blocks: Array[CharacterBody2D] = []
 var all_spawn_positions: Array[Vector2] = []
 
 # Game state
+var current_level: int = 1
 var current_score: int = 0
 var enemies_killed: int = 0
 var total_enemies: int = 0
@@ -51,9 +53,8 @@ func _ready():
 	# Set up the game
 	setup_play_area()
 	generate_spawn_positions()
-	spawn_enemy_kvadrat() #ordningen spelar roll här
-	spawn_enemies() #ordningen spelar roll här 
-	spawn_enemy_lazer()  #ordningen spelar roll här 
+	setup_level_manager()
+	level_manager.start_level(current_level)
 	spawn_player()
 	setup_pause_menu()
 	setup_death_menu()
@@ -77,6 +78,15 @@ func _process(delta):
 func setup_play_area():
 	# Create grid background with distortion support
 	create_grid_background()
+
+func setup_level_manager():
+	level_manager = Node.new()
+	level_manager.name = "LevelManager"
+	add_child(level_manager)
+	level_manager.set_script(load("res://scripts/level_manager.gd"))
+	
+	# Ge level manager tillgång till main-scenen
+	level_manager.main_scene = self
 
 func create_distortion_effect(center: Vector2, force: float = -1.0, radius: float = -1.0, duration: float = -1.0) -> int:
 	"""Create a new distortion effect at the given position"""
@@ -125,6 +135,7 @@ func update_distortions(delta: float):
 			print("Distortion effect expired")
 		
 		i -= 1
+
 
 func update_shader_uniforms():
 	"""Update shader uniforms with current distortion data"""
@@ -417,11 +428,26 @@ func _on_player_died():
 		death_menu.show_death_menu()
 
 # Fixed functions that capture position before object is freed
+func _on_enemy_died(score_points: int):
+	enemies_killed += 1
+	current_score += score_points
+	
+	print("Enemy killed! Score: ", current_score, " Enemies remaining: ", (total_enemies - enemies_killed))
+	
+	# Update UI
+	update_ui()
+	
+	# Check win condition - använd level manager istället för player_wins
+	if enemies_killed >= total_enemies:
+		if level_manager and level_manager.has_method("level_completed"):
+			level_manager.level_completed()
+		else:
+			player_wins()  # Fallback
 func _on_enemy_died_with_distortion(score_points: int, death_position: Vector2):
 	"""Handle enemy death with distortion effect"""
 	create_enemy_death_distortion(death_position)
 	_on_enemy_died(score_points)
-
+	
 func _on_block_died_with_distortion(score_points: int, death_position: Vector2):
 	"""Handle regular block death with distortion effect"""
 	create_enemy_death_distortion(death_position)
@@ -435,19 +461,6 @@ func _on_lazer_block_died_with_distortion(score_points: int, death_position: Vec
 	var duration = randf_range(2.0, 3.0)
 	create_distortion_effect(death_position, force, radius, duration)
 	_on_enemy_died(score_points)
-		
-func _on_enemy_died(score_points: int):
-	enemies_killed += 1
-	current_score += score_points
-	
-	print("Enemy killed! Score: ", current_score, " Enemies remaining: ", (total_enemies - enemies_killed))
-	
-	# Update UI
-	update_ui()
-	
-	# Check win condition
-	if enemies_killed >= total_enemies:
-		player_wins()
 		
 func _on_enemy_hit(damage: int):
 	# Optional: Add score for hitting enemies
