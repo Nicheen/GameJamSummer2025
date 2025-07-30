@@ -12,6 +12,7 @@ const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
 const ENEMY_SCENE = "res://scenes/obj/Enemy.tscn"
 const ENEMY_BLOCK_SCENE = "res://scenes/obj/blocks/Block.tscn"
 const ENEMY_BLOCK_LAZER_SCENE = "res://scenes/obj/blocks/BlockLazer.tscn"
+const ENEMY_BLOCK_DROPPER_SCENE = "res://scenes/obj/blocks/block_dropper.tscn"
 const BOSS_SCENE = "res://scenes/obj/bosses/Boss1.tscn"
 const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
 const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
@@ -27,6 +28,7 @@ var win_menu: Control
 var enemies: Array[CharacterBody2D] = []
 var blocks: Array[CharacterBody2D] = []
 var lazer_blocks: Array[CharacterBody2D] = []
+var block_droppers: Array[CharacterBody2D] = []
 var bosses: Array[CharacterBody2D] = []
 var all_spawn_positions: Array[Vector2] = []
 
@@ -264,6 +266,13 @@ func spawn_enemy_kvadrat():
 	
 	for pos in selected_positions:
 		spawn_enemy_kvadrat_at_position(pos)
+		
+func spawn_enemy_block_dropper():
+	# Använd den nya funktionen
+	var selected_positions = get_random_spawn_positions(20)
+	
+	for pos in selected_positions:
+		spawn_enemy_block_dropper_at_position(pos)
 
 func spawn_random_enemies(count: int):
 	# Förenklad version
@@ -280,6 +289,25 @@ func spawn_boss_at_center():
 	
 	# Spawna boss här...
 	print("Spawning boss at: ", boss_pos)
+
+func spawn_enemy_block_dropper_at_position(position: Vector2):
+	var block_scene = load(ENEMY_BLOCK_DROPPER_SCENE)  # Ladda kvadrat-scenen
+	if not block_scene:
+		print("ERROR: Could not load enemy kvadrat scene at: ", ENEMY_BLOCK_DROPPER_SCENE)
+		return
+	
+	var block = block_scene.instantiate()
+	block.global_position = position
+	
+	# Connect enemy signals with distortion effects - pass position in closure
+	block.block_dropper_died.connect(func(score_points): _on_block_died_with_distortion(score_points, position))
+	block.block_dropper_hit.connect(_on_enemy_hit)
+	
+	add_child(block)
+	blocks.append(block)
+	total_enemies += 1
+	
+	print("Spawned kvadrat enemy at: ", position)
 
 func spawn_enemy_kvadrat_at_position(position: Vector2):
 	var block_scene = load(ENEMY_BLOCK_SCENE)  # Ladda kvadrat-scenen
@@ -323,7 +351,7 @@ func spawn_enemy_lazer():
 	
 	# Spawna lazer-block
 	available_positions.shuffle()
-	var lazer_count = min(2, available_positions.size())  # 10 lazer-block
+	var lazer_count = min(2, available_positions.size())
 	
 	for i in range(lazer_count):
 		spawn_enemy_lazer_at_position(available_positions[i])
@@ -357,6 +385,9 @@ func spawn_enemy_lazer_at_position(position: Vector2):
 	total_enemies += 1
 	
 	print("Spawned lazer block at: ", position)
+	
+	
+	
 func spawn_player():
 	# Load and instantiate the player scene
 	var player_scene = load(PLAYER_SCENE)
