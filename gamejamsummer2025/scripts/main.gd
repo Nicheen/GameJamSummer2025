@@ -429,13 +429,6 @@ func setup_win_menu():
 	add_child(win_menu)
 	
 	print("Win menu setup complete")
-
-func _input(event):
-	"""Handle global input events"""
-	# Test distortion effects with right mouse click (for debugging)
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
-		create_distortion_effect(event.position)
-		print("Created test distortion at ", event.position)
 	
 func _on_player_died():
 	print("Player died! Final score: ", current_score)
@@ -469,16 +462,10 @@ func _on_enemy_died_with_distortion(score_points: int, death_position: Vector2):
 	
 func _on_block_died_with_distortion(score_points: int, death_position: Vector2):
 	"""Handle regular block death with distortion effect"""
-	create_enemy_death_distortion(death_position)
 	_on_enemy_died(score_points)
 
 func _on_lazer_block_died_with_distortion(score_points: int, death_position: Vector2):
 	"""Handle lazer block death with stronger distortion effect"""
-	# Lazer blocks create stronger distortions
-	var force = randf_range(25.0, 35.0)
-	var radius = randf_range(200.0, 300.0)
-	var duration = randf_range(2.0, 3.0)
-	create_distortion_effect(death_position, force, radius, duration)
 	_on_enemy_died(score_points)
 		
 func _on_enemy_hit(damage: int):
