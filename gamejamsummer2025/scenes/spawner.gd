@@ -2,11 +2,15 @@ class_name Spawner extends Node2D
 
 @export var bounds:Bounds
 
-var player_scene:PackedScene = preload("res://scenes/obj/Player.tscn")
-var enemy_scene:PackedScene = preload("res://scenes/obj/Enemy.tscn")
+var player_scene:PackedScene = preload("res://scenes/obj/player/Player.tscn")
+var enemy_scene:PackedScene = preload("res://scenes/obj/enemy/Enemy.tscn")
+
+var tiles: [Vector2]
+
+func get_empty_spawn_position():
+	pass
 
 func spawn_enemy():
-	# 1 where to spawn it (position)
 	var spawn_point:Vector2 = Vector2.ZERO
 	spawn_point.x = randf_range(bounds.x_min + Global.GRID_SIZE, bounds.x_max - Global.GRID_SIZE)
 	spawn_point.y = randf_range(bounds.y_min + Global.GRID_SIZE, bounds.y_max - Global.GRID_SIZE)

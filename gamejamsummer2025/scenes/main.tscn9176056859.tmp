@@ -122,14 +122,14 @@ shape = SubResource("RectangleShape2D_sugp2")
 position = Vector2(576, 648)
 shape = SubResource("RectangleShape2D_jyhfs")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Deathzone"]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_0bbpv")
 position = Vector2(576, -3)
 amount = 50
 texture = ExtResource("2_rvslj")
 process_material = SubResource("ParticleProcessMaterial_o5qli")
 
-[node name="GPUParticles2D2" type="GPUParticles2D" parent="Deathzone"]
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_0bbpv")
 position = Vector2(575, 655)
 amount = 50
@@ -137,7 +137,6 @@ texture = ExtResource("2_rvslj")
 process_material = SubResource("ParticleProcessMaterial_rvslj")
 
 [node name="LevelManager" type="Node" parent="."]
-unique_name_in_owner = true
 script = ExtResource("3_0bbpv")
 
 [node name="Bounds" type="Node2D" parent="."]
@@ -158,9 +157,16 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 script = ExtResource("6_tefeu")
 
-[node name="PLAYER" parent="." instance=ExtResource("7_o6xl0")]
+[node name="Player" parent="." instance=ExtResource("7_o6xl0")]
 unique_name_in_owner = true
 position = Vector2(574, 606)
+speed = null
+acceleration = null
+friction = null
+teleport_cooldown = null
+projectile_speed = null
+shoot_cooldown = null
 max_health = 30
+damage_per_hit = null
 
-[connection signal="player_died" from="PLAYER" to="." method="_on_player_died"]
+[connection signal="player_died" from="Player" to="." method="_on_player_died"]

@@ -1,15 +1,12 @@
-[gd_scene load_steps=20 format=3 uid="uid://b5flfw85xnn3s"]
+[gd_scene load_steps=19 format=3 uid="uid://b5flfw85xnn3s"]
 
-[ext_resource type="Script" uid="uid://c2dkvm0rwmi1d" path="res://scenes/main.gd" id="1_elqb8"]
+[ext_resource type="Script" uid="uid://c2dkvm0rwmi1d" path="res://scripts/main.gd" id="1_elqb8"]
+[ext_resource type="Texture2D" uid="uid://cputn3w68k8fj" path="res://images/grid_1152x648.png" id="2_nxtc6"]
 [ext_resource type="Texture2D" uid="uid://c65h8mkqgajjv" path="res://images/textures/VFX_NOEL_CIRCLE.jpg" id="2_rvslj"]
-[ext_resource type="Script" uid="uid://8fvtdceyak8j" path="res://scenes/level_manager.gd" id="3_0bbpv"]
+[ext_resource type="Script" uid="uid://8fvtdceyak8j" path="res://scripts/level_manager.gd" id="3_0bbpv"]
 [ext_resource type="PackedScene" uid="uid://dc25tu6hyq1e2" path="res://scenes/menus/hud.tscn" id="3_sugp2"]
 [ext_resource type="Script" uid="uid://jranj8pqoox8" path="res://scenes/bounds.gd" id="5_tbgi4"]
 [ext_resource type="Script" uid="uid://2stp3m5gk2bv" path="res://scenes/spawner.gd" id="6_tefeu"]
-[ext_resource type="PackedScene" uid="uid://b4g35yo4tk2kb" path="res://scenes/obj/player/Player.tscn" id="7_o6xl0"]
-
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_tefeu"]
-load_path = "res://.godot/imported/grid_1152x648.png-560c9d64e4dced2571fb113ed4b9d73a.ctex"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_o5qli"]
 size = Vector2(200, 648)
@@ -65,10 +62,12 @@ color_ramp = SubResource("GradientTexture1D_0wfyh")
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_elqb8")
+play_area_size = null
+play_area_center = null
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(576, 324)
-texture = SubResource("CompressedTexture2D_tefeu")
+texture = ExtResource("2_nxtc6")
 
 [node name="Borders" type="Node2D" parent="."]
 
@@ -122,14 +121,14 @@ shape = SubResource("RectangleShape2D_sugp2")
 position = Vector2(576, 648)
 shape = SubResource("RectangleShape2D_jyhfs")
 
-[node name="GPUParticles2D" type="GPUParticles2D" parent="Deathzone"]
+[node name="GPUParticles2D" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_0bbpv")
 position = Vector2(576, -3)
 amount = 50
 texture = ExtResource("2_rvslj")
 process_material = SubResource("ParticleProcessMaterial_o5qli")
 
-[node name="GPUParticles2D2" type="GPUParticles2D" parent="Deathzone"]
+[node name="GPUParticles2D2" type="GPUParticles2D" parent="."]
 material = SubResource("CanvasItemMaterial_0bbpv")
 position = Vector2(575, 655)
 amount = 50
@@ -137,7 +136,6 @@ texture = ExtResource("2_rvslj")
 process_material = SubResource("ParticleProcessMaterial_rvslj")
 
 [node name="LevelManager" type="Node" parent="."]
-unique_name_in_owner = true
 script = ExtResource("3_0bbpv")
 
 [node name="Bounds" type="Node2D" parent="."]
@@ -151,16 +149,8 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 position = Vector2(1152, 637)
 
-[node name="HUD" parent="." instance=ExtResource("3_sugp2")]
-unique_name_in_owner = true
+[node name="Hud" parent="." instance=ExtResource("3_sugp2")]
 
 [node name="Spawner" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("6_tefeu")
-
-[node name="PLAYER" parent="." instance=ExtResource("7_o6xl0")]
-unique_name_in_owner = true
-position = Vector2(574, 606)
-max_health = 30
-
-[connection signal="player_died" from="PLAYER" to="." method="_on_player_died"]

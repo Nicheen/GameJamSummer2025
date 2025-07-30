@@ -1,4 +1,4 @@
-extends CharacterBody2D
+class_name Player extends CharacterBody2D
 
 # Movement settings
 @export var speed: float = 600.0
@@ -7,8 +7,6 @@ extends CharacterBody2D
 
 # Teleport settings
 @export var teleport_cooldown: float = 0.2
-@export var play_area_size: Vector2 = Vector2(1000, 600)
-@export var play_area_center: Vector2 = Vector2(500, 300)
 
 # Shooting settings
 @export var projectile_scene: PackedScene = load("res://scenes/obj/Projectile.tscn")
@@ -36,16 +34,12 @@ var teleport_effect_duration: float = 0.1
 var is_teleporting: bool = false
 
 # Signals
-signal health_changed(new_health: int)
 signal player_died
 
 func _ready():
 	# Set initial position and health
 	global_position = Vector2(500, 200)
 	current_health = max_health
-	
-	# Connect to projectile hits
-	connect_to_projectiles()
 
 func _physics_process(delta):
 	handle_teleport_cooldown(delta)
@@ -146,19 +140,14 @@ func shoot_projectile():
 	# Initialize the projectile
 	projectile.initialize(shoot_direction, projectile_speed)
 	
-	# Connect the hit signal
-	projectile.hit_player.connect(_on_projectile_hit)
-	
-	print("Projectile setup complete")
-	
 	# Start cooldown
 	start_shoot_cooldown()
 func teleport_to_edge(direction: Vector2):
 	var new_position = global_position
-	var half_size = play_area_size * 0.5
+	var half_size = Global.PLAY_AREA_SIZE * 0.5
 	var bounds = {
-		"top": play_area_center.y - half_size.y,
-		"bottom": play_area_center.y + half_size.y
+		"top": Global.PLAY_AREA_CENTER.y - half_size.y,
+		"bottom": Global.PLAY_AREA_CENTER.y + half_size.y
 	}
 	
 	# Spara nuvarande x-hastighet innan teleportering
@@ -222,10 +211,6 @@ func set_sprite_modulate(color: Color):
 	if sprite:
 		sprite.modulate = color
 
-func set_play_area(center: Vector2, size: Vector2):
-	play_area_center = center
-	play_area_size = size
-
 func update_sprite_rotation():
 	if not sprite:
 		return
@@ -247,19 +232,9 @@ func update_sprite_rotation():
 	
 	tween.tween_property(sprite, "rotation", target_rotation, 0.2)
 
-func connect_to_projectiles():
-	# This function can be used to connect to existing projectiles if needed
-	pass
-
-func _on_projectile_hit():
-	take_damage(damage_per_hit)
-
 func take_damage(amount: int):
 	current_health -= amount
 	current_health = max(0, current_health)
-	
-	# Emit health changed signal
-	health_changed.emit(current_health)
 	
 	# Visual damage feedback
 	if sprite:
@@ -270,13 +245,10 @@ func take_damage(amount: int):
 	# Check if player died
 	if current_health <= 0:
 		player_died.emit()
-		# Optional: disable movement or restart game
-		print("Player died!")
 
 func heal(amount: int):
 	current_health += amount
 	current_health = min(max_health, current_health)
-	health_changed.emit(current_health)
 
 func get_health() -> int:
 	return current_health
