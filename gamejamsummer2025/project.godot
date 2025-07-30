@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 flowerwall_crt="*res://addons/flowerwall_postprocess/scenes/flowerwall_pp.tscn"
+Global="*res://autoloads/global.gd"
 
 [editor_plugins]
 
