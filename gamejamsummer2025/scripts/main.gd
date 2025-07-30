@@ -9,6 +9,7 @@ const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
 const ENEMY_SCENE = "res://scenes/obj/Enemy.tscn"
 const ENEMY_BLOCK_SCENE = "res://scenes/obj/blocks/Block.tscn"
 const ENEMY_BLOCK_LAZER_SCENE = "res://scenes/obj/blocks/BlockLazer.tscn"
+const BOSS_SCENE = "res://scenes/obj/bosses/Boss1.tscn"
 const PAUSE_MENU_SCENE = "res://scenes/menus/pause_menu.tscn" 
 const DEATH_MENU_SCENE = "res://scenes/menus/death_menu.tscn"
 const WIN_MENU_SCENE = "res://scenes/menus/win_menu.tscn"
@@ -23,6 +24,7 @@ var win_menu: Control
 var enemies: Array[CharacterBody2D] = []
 var blocks: Array[CharacterBody2D] = []
 var lazer_blocks: Array[CharacterBody2D] = []
+var bosses: Array[CharacterBody2D] = []
 var all_spawn_positions: Array[Vector2] = []
 
 # Game state
