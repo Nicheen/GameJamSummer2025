@@ -1,4 +1,7 @@
-extends Node2D
+class_name GamePlay extends Node2D
+
+const gameover_scene:PackedScene = preload("res://scenes/menus/game_over.tscn")
+const pausemenu_scene:PackedScene = preload("res://scenes/menus/pause_menu.tscn")
 
 # Game settings
 @export var play_area_size: Vector2 = Vector2(1152, 648)  # Match your window size
@@ -137,7 +140,6 @@ func update_distortions(delta: float):
 			print("Distortion effect expired")
 		
 		i -= 1
-
 
 func update_shader_uniforms():
 	"""Update shader uniforms with current distortion data"""
