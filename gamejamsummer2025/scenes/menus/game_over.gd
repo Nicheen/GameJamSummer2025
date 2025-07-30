@@ -1,4 +1,4 @@
-extends Control
+class_name GameOver extends Control
 
 func _ready():
 	# Connect buttons

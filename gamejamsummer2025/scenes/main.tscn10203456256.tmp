@@ -137,7 +137,6 @@ texture = ExtResource("2_rvslj")
 process_material = SubResource("ParticleProcessMaterial_rvslj")
 
 [node name="LevelManager" type="Node" parent="."]
-unique_name_in_owner = true
 script = ExtResource("3_0bbpv")
 
 [node name="Bounds" type="Node2D" parent="."]

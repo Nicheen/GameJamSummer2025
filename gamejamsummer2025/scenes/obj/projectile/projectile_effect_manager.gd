@@ -1,5 +1,4 @@
-class_name ProjectileEffectManager
-extends Node
+class_name ProjectileEffectManager extends Node
 
 # Visual settings
 var warp_intensity: float = 0.3

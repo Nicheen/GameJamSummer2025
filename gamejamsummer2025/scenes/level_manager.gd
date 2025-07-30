@@ -1,69 +1,29 @@
-extends Node
+class_name LevelManager extends Node
 
 var main_scene: Node2D
+@onready var hud: HUD = %HUD as HUD
+
 var current_level: int = 1
 
 func start_level(level: int):
 	current_level = level
-	print("Starting level: ", level)
-	
-	# Rensa tidigare enemies/blocks
 	clear_level()
-	
-	# Kolla om det är boss-level
+
 	if is_boss_level(level):
 		spawn_boss_level(level)
 	else:
 		spawn_normal_level(level)
 	
-	# Uppdatera UI
-	update_level_ui()
+	hud.update_level(level)
 
 func is_boss_level(level: int) -> bool:
 	return level % 5 == 0  # Var tionde level (10, 20, 30, etc.)
 
 func clear_level():
-	# Ta bort alla befintliga enemies, blocks och bossar
-	for enemy in main_scene.enemies:
-		if is_instance_valid(enemy):
-			enemy.queue_free()
-	
-	for block in main_scene.blocks:
-		if is_instance_valid(block):
-			block.queue_free()
-	
-	for lazer_block in main_scene.lazer_blocks:
-		if is_instance_valid(lazer_block):
-			lazer_block.queue_free()
-			
-	for block_dropper in main_scene.block_droppers:
-		if is_instance_valid(block_dropper):
-			block_dropper.queue_free()
-	
-	for boss in main_scene.bosses:
-		if is_instance_valid(boss):
-			boss.queue_free()
-	
-	# Rensa arrays
-	main_scene.enemies.clear()
-	main_scene.blocks.clear()
-	main_scene.lazer_blocks.clear()
-	main_scene.block_droppers.clear()
-	main_scene.bosses.clear()
-	
-	# Återställ räknare
-	main_scene.enemies_killed = 0
-	main_scene.total_enemies = 0
+	pass
 
 func spawn_boss_level(level: int):
-	print("BOSS LEVEL ", level, "!")
-	
-	# Spawna boss
 	spawn_boss(level)
-	
-	# Spawna några vanliga enemies också för att göra det svårare
-	#var support_enemies = 3 + (level / 10)  # Fler support enemies för högre boss levels
-	#spawn_enemies_for_level(support_enemies)
 
 func spawn_normal_level(level: int):
 	# Beräkna antal enemies baserat på level
@@ -121,11 +81,8 @@ func spawn_boss(level: int):
 	print("Boss spawned for level ", level, " with health multiplier: ", boss_health_multiplier)
 
 func _on_boss_died(score_points: int):
-	# Boss ger mycket mer poäng
 	var boss_bonus = current_level * 100  # Extra bonus baserat på level
 	main_scene._on_enemy_died(score_points + boss_bonus)
-	
-	print("BOSS DEFEATED! Bonus points: ", boss_bonus)
 
 func spawn_blocks_for_level(count: int):
 	var selected_positions = main_scene.get_random_spawn_positions(count)
@@ -174,16 +131,7 @@ func spawn_enemies_for_level(count: int):
 	
 	for i in range(spawn_count):
 		main_scene.spawn_enemy_at_position(available_positions[i])
-
-func update_level_ui():
-	# Uppdatera UI för att visa current level
-	var level_text = "Level: " + str(current_level)
-	if is_boss_level(current_level):
-		level_text += " [BOSS]"
 	
-	if main_scene.score_label:
-		main_scene.score_label.text = level_text + " | Score: " + str(main_scene.current_score)
-
 func level_completed():
 	if is_boss_level(current_level):
 		print("BOSS LEVEL ", current_level, " COMPLETED!")

@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://7xnhieqtejv1"]
 
-[ext_resource type="Script" uid="uid://damb12qgbc5xj" path="res://scripts/obj/blocks/block_lazer.gd" id="1_mee4x"]
+[ext_resource type="Script" uid="uid://damb12qgbc5xj" path="res://scenes/obj/blocks/block_lazer.gd" id="1_mee4x"]
 [ext_resource type="Texture2D" uid="uid://bsubstbcfu5mr" path="res://images/lime_green_square.svg" id="2_4njxj"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_5u526"]
