@@ -6,6 +6,7 @@ const pausemenu_scene:PackedScene = preload("res://scenes/menus/pause_menu.tscn"
 # Game settings
 @export var play_area_size: Vector2 = Vector2(1152, 648)  # Match your window size
 @export var play_area_center: Vector2 = Vector2(576, 324)  # Half of window size
+@onready var hud: HUD = %HUD as HUD
 
 # Hardcoded scene paths
 const PLAYER_SCENE = "res://scenes/obj/Player.tscn"
@@ -39,9 +40,6 @@ var enemies_killed: int = 0
 var total_enemies: int = 0
 var game_won: bool = false
 
-# UI elements
-var score_label: Label
-var enemies_remaining_label: Label
 
 # Distortion effect system
 var grid_background: ColorRect
@@ -66,7 +64,6 @@ func _ready():
 	setup_pause_menu()
 	setup_death_menu()
 	setup_win_menu()
-	setup_ui()
 	
 	print("Game scene ready!")
 	print("Total enemies spawned: ", total_enemies)
@@ -440,19 +437,6 @@ func _input(event):
 		create_distortion_effect(event.position)
 		print("Created test distortion at ", event.position)
 	
-func setup_ui():
-	# Create UI layer
-	var ui_layer = CanvasLayer.new()
-	ui_layer.name = "UI"
-	add_child(ui_layer)
-	
-	# Score label
-	score_label = Label.new()
-	score_label.text = "Score: 0"
-	score_label.position = Vector2(play_area_center.x - 65, play_area_center.y - 16)
-	score_label.add_theme_font_size_override("font_size", 32)
-	ui_layer.add_child(score_label)
-	
 func _on_player_died():
 	print("Player died! Final score: ", current_score)
 	
@@ -520,13 +504,9 @@ func update_death_menu_score():
 		score_label_in_death_menu.text = "Final Score: " + str(current_score)
 			
 func update_ui():
-	if score_label:
-		score_label.text = "Score: " + str(current_score)
-	
-	if enemies_remaining_label:
-		var remaining = total_enemies - enemies_killed
-		enemies_remaining_label.text = "Enemies: " + str(remaining)
-		
+	hud.update_level(current_level)
+	hud.update_score(current_score)
+
 func create_grid_background():
 	# Create a ColorRect that covers the entire screen
 	grid_background = ColorRect.new()

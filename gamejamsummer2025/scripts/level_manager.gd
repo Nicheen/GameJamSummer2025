@@ -15,9 +15,7 @@ func start_level(level: int):
 		spawn_boss_level(level)
 	else:
 		spawn_normal_level(level)
-	
-	# Uppdatera UI
-	update_level_ui()
+
 
 func is_boss_level(level: int) -> bool:
 	return level % 5 == 0  # Var tionde level (10, 20, 30, etc.)
@@ -174,15 +172,6 @@ func spawn_enemies_for_level(count: int):
 	
 	for i in range(spawn_count):
 		main_scene.spawn_enemy_at_position(available_positions[i])
-
-func update_level_ui():
-	# Uppdatera UI för att visa current level
-	var level_text = "Level: " + str(current_level)
-	if is_boss_level(current_level):
-		level_text += " [BOSS]"
-	
-	if main_scene.score_label:
-		main_scene.score_label.text = level_text + " | Score: " + str(main_scene.current_score)
 
 func level_completed():
 	if is_boss_level(current_level):
