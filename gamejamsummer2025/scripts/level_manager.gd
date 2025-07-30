@@ -57,12 +57,12 @@ func spawn_boss_level(level: int):
 	spawn_boss(level)
 	
 	# Spawna några vanliga enemies också för att göra det svårare
-	var support_enemies = 3 + (level / 10)  # Fler support enemies för högre boss levels
-	spawn_enemies_for_level(support_enemies)
+	#var support_enemies = 3 + (level / 10)  # Fler support enemies för högre boss levels
+	#spawn_enemies_for_level(support_enemies)
 
 func spawn_normal_level(level: int):
 	# Beräkna antal enemies baserat på level
-	var base_blocks = 15
+	var base_blocks = 8
 	var base_enemies = 3
 	var base_lazer = 1
 	
@@ -72,7 +72,7 @@ func spawn_normal_level(level: int):
 	var lazer_count = base_lazer + (level - 1) / 3  # +1 lazer var 3:e level
 	
 	# Max gränser
-	blocks_count = min(blocks_count, 40)
+	blocks_count = min(blocks_count, 20)
 	enemies_count = min(enemies_count, 10)
 	lazer_count = min(lazer_count, 5)
 	

@@ -16,8 +16,8 @@ var is_dead: bool = false
 var original_color: Color
 
 # Signals
-signal block_died(score_points: int)
-signal block_hit(damage: int)
+signal boss_died(score_points: int)
+signal boss_hit(damage: int)
 
 func _ready():
 	# Set up enemy
@@ -65,7 +65,7 @@ func take_damage(damage: int):
 	show_damage_effect()
 	
 	# Emit hit signal
-	block_hit.emit(damage)
+	boss_hit.emit(damage)
 	
 	# Check if dead
 	if current_health <= 0:
@@ -79,7 +79,7 @@ func die():
 	print("Enemy died! Awarding ", score_value, " points")
 	
 	# Emit death signal with score
-	block_died.emit(score_value)
+	boss_died.emit(score_value)
 	
 	play_death_effect()
 	
